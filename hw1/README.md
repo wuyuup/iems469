@@ -8,6 +8,6 @@ python hw1_single.py
 ```
 to obtain the following figures
 
-![alt text](https://github.com/wuyuup/iems469/blob/master/hw1/enum.pdf?raw=true)
-![alt text](https://github.com/wuyuup/iems469/blob/master/hw1/vi.pdf?raw=true)
-![alt text](https://github.com/wuyuup/iems469/blob/master/hw1/pi.pdf?raw=true)
+![alt text](https://github.com/wuyuup/iems469/blob/master/hw1/enum.png?raw=true)
+![alt text](https://github.com/wuyuup/iems469/blob/master/hw1/vi.png?raw=true)
+![alt text](https://github.com/wuyuup/iems469/blob/master/hw1/pi.png?raw=true)
