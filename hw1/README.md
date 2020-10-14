@@ -9,12 +9,15 @@ python hw1_single.py
 to obtain the following figures: 
 
 Enumeration: 
+
 ![alt text](https://github.com/wuyuup/iems469/blob/master/hw1/enum.png?raw=true)
 
 Value Iteration: 
+
 ![alt text](https://github.com/wuyuup/iems469/blob/master/hw1/vi.png?raw=true)
 
 Policy Iteration: 
+
 ![alt text](https://github.com/wuyuup/iems469/blob/master/hw1/pi.png?raw=true)
 
 
