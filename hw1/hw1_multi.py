@@ -14,10 +14,10 @@ gamma = 0.95
 cmax = 100 # max number of customers
 Amin = 1
 Amax = 5
-max_iter = 1e7
+max_iter = 1e3
 tol = 1e-7
 T = 500
-
+NN = 5
 
 
 # util
@@ -25,7 +25,7 @@ T = 500
 # construct state space
 state_space = []
 def gen_state_space(cur):
-    if len(cur) == 5:
+    if len(cur) == NN:
         state_space.append(tuple(cur))
     else:
         for i in range(cmax+1):
@@ -37,7 +37,7 @@ gen_state_space([])
 # generate scenarios
 scenario = []
 def gen_scenario(cur):
-    if len(cur) == 5:
+    if len(cur) == NN:
         scenario.append(tuple(cur))
     else:
         for i in range(Amin, Amax+1):
@@ -46,11 +46,14 @@ def gen_scenario(cur):
 gen_scenario([])
 
 
-def def_value(): 
+def def_value():
     return [0.0, 0.0]
 
-def def_value_v(): 
+def def_value_v():
     return 0.0
+
+def def_value_policy():
+    return 0
 
 def next_state_before_arrival(s, a):
     news = np.copy(s)
@@ -65,15 +68,15 @@ def next_state_before_arrival(s, a):
             else:
                 break
         # possibly left > 0 which indicates nobody in the queue
-    return news
+    return tuple(news)
 
 
 def next_state_after_arrival(s, A): # A: vector of arrivals
-    news = s+A
+    news = [s[i]+A[i] for i in range(len(s))]
     for i,num in enumerate(news):
         if num > cmax:
             news[i] = cmax
-    return news
+    return tuple(news)
 
 
 def rew_func(s, a):
@@ -136,7 +139,9 @@ def value_iter(K, cf, ch, max_iter, cmax, tol, Amin, Amax):
                 Qfunc[s][a] = rew + gamma * EQ
                 Vfunc[s] = max(Qfunc[s])
                 cur_error = max(cur_error, abs(Qfunc_prev[s][a]-Qfunc[s][a]))
-        Qfunc_prev = copy(Qfunc)
+        for a in range(2):
+            for s in state_space:
+                Qfunc_prev[s][a] = Qfunc[s][a]
 
     return Vfunc
 
@@ -149,7 +154,7 @@ def value_iter(K, cf, ch, max_iter, cmax, tol, Amin, Amax):
 
 def policy_iter(K, cf, ch, max_iter, cmax, tol, Amin, Amax):
 
-    policy = defaultdict(def_value_v)
+    policy = defaultdict(def_value_policy)
     Qfunc = defaultdict(def_value)  # Qfunc[s] is a vector of length 2
     Qfunc_prev = defaultdict(def_value)
 
@@ -171,23 +176,27 @@ def policy_iter(K, cf, ch, max_iter, cmax, tol, Amin, Amax):
                 Qfunc[s][a] = rew + gamma * EQ
                 cur_error = max(cur_error, abs(Qfunc_prev[s][a]-Qfunc[s][a]))
         for s in state_space:
-            policy = np.argmax(Qfunc[s])
-        Qfunc_prev = copy(Qfunc)
+            policy[s] = np.argmax(Qfunc[s])
+        for a in range(2):
+            for s in state_space:
+                Qfunc_prev[s][a] = Qfunc[s][a]
 
     return policy
 
 
 
-
-plt.plot(enumeration(K, cf, ch, max_iter, cmax, tol, Amin, Amax))
-plt.savefig('pi.pdf')
+val_func = enumeration(K, cf, ch, max_iter, cmax, tol, Amin, Amax)
+plt.plot([val_func[(i,0)] for i in range(cmax) ])
+plt.savefig('enum.pdf')
 plt.clf()
 
-plt.plot(value_iter(K, cf, ch, max_iter, cmax, tol, Amin, Amax))
-plt.savefig('pi.pdf')
+val_func = value_iter(K, cf, ch, max_iter, cmax, tol, Amin, Amax)
+plt.plot([val_func[(i,0)] for i in range(cmax) ])
+plt.savefig('vi.pdf')
 plt.clf()
 
-plt.plot(policy_iter(K, cf, ch, max_iter, cmax, tol, Amin, Amax))
+policy_func = policy_iter(K, cf, ch, max_iter, cmax, tol, Amin, Amax)
+plt.plot([policy_func[(i,0)] for i in range(cmax) ])
 plt.savefig('pi.pdf')
 plt.clf()
 
