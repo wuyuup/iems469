@@ -1,8 +1,3 @@
-import copy
-import glob
-import os
-import time
-from collections import deque
 from itertools import count
 
 import gym
@@ -15,7 +10,6 @@ import torch.optim as optim
 import utils
 from arguments import get_args
 from model import Policy
-from storage import RolloutStorage
 from a2c import A2C
 import logging
 import torch.multiprocessing as mp
@@ -29,7 +23,7 @@ if __name__ == '__main__':
     torch.cuda.manual_seed_all(args.seed)
     torch.set_num_threads(1)
     device = torch.device('cuda' if args.cuda else 'cpu')
-    # device = 'cpu'
+    # device = torch.device('cpu')
     env = gym.make(args.env_name)
     env.seed(args.seed)
 
@@ -43,7 +37,7 @@ if __name__ == '__main__':
 
     agent = A2C(shared_ac, args)
 
-    if args.cuda:
+    if args.cuda:  # somehow need it to enable cuda.. but super slow
         torch.multiprocessing.set_start_method('spawn')
 
     processes = []
@@ -51,13 +45,10 @@ if __name__ == '__main__':
     lock = mp.Lock()
 
     for idx in range(0, args.num_processes):
-        # p = mp.Process(target = train, args = (agent, shared_ac, args, device, idx, counter, lock))
+        # p = mp.Process(target = train, args = (agent, shared_ac, args, 'cpu', idx, counter, lock))
         p = mp.Process(target = train, args = (agent, shared_ac, args, device, idx, counter, lock))
         p.start()
         processes.append(p)
     for p in processes:
         p.join()
-
-
-
 

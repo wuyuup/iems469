@@ -6,20 +6,17 @@ import numpy as np
 from model import Policy
 import gym
 import utils
-from storage import RolloutStorage
+from buffer import RolloutBuffer
 from collections import deque
-import time
 from itertools import count
 import os
 import logging
 
 def ensure_shared_grads(model, shared_model):
-    for param, shared_param in zip(model.parameters(),
-                                   shared_model.parameters()):
+    for param, shared_param in zip(model.parameters(), shared_model.parameters()):
         if shared_param.grad is not None:
             return
         shared_param._grad = param.grad
-
 
 def train(agent, shared_model, args, device, idx, counter, lock):
     torch.manual_seed(args.seed + idx)
@@ -30,8 +27,7 @@ def train(agent, shared_model, args, device, idx, counter, lock):
     local_ac = Policy(obs.shape)
     local_ac.to(device)
     # rollout buffer
-    rollouts = RolloutStorage(args.num_steps, obs.shape, env.action_space, device)
-    # rollouts = RolloutStorage(args.num_steps, obs.shape, env.action_space, 'cpu')
+    rollouts = RolloutBuffer(args.num_steps, obs.shape, env.action_space, device)
 
     rollouts.obs[0] = torch.Tensor(obs)
 
@@ -70,7 +66,7 @@ def train(agent, shared_model, args, device, idx, counter, lock):
         with torch.no_grad():
             next_value = local_ac.get_value(rollouts.obs[-1]).detach()
 
-        rollouts.compute_returns(next_value, args)
+        rollouts.compute_qval(next_value, args)
 
         total_loss = agent.update(rollouts)
 
@@ -81,8 +77,8 @@ def train(agent, shared_model, args, device, idx, counter, lock):
         ensure_shared_grads(local_ac, shared_model)
         optimizer.step()
 
-        # need to keep mask and obs..
-        rollouts.after_update()
+        # need to recover mask and obs..
+        rollouts.recover_state()
 
         # save model: ok to save local model (load from shared model)
         if (j % args.save_interval == 0) and args.save_dir != "":
@@ -98,8 +94,5 @@ def train(agent, shared_model, args, device, idx, counter, lock):
             total_num_steps = (j + 1) * args.num_steps
             output_str = "Updates {}, num timesteps {} \n Last {} training episodes: mean reward {:.1f}".format(
                 j, total_num_steps, len(episode_rewards), np.mean(episode_rewards))
-
             print(output_str)
             logging.info(output_str)
-
-

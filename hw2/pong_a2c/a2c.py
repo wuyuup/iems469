@@ -20,7 +20,7 @@ class A2C():
         values = values.view(num_steps, 1)
         action_log_probs = action_log_probs.view(num_steps, 1)
 
-        advantages = rollouts.returns[:-1] - values
+        advantages = rollouts.qval[:-1] - values
         value_loss = advantages.pow(2).mean()
 
         policy_loss = -(advantages.detach() * action_log_probs).mean()
