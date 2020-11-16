@@ -8,11 +8,11 @@ python main.py --env 'Breakout-v0'
 ```
 to obtain the following training curve for Breakout-v0 with DQN: 
 
-![alt text](https://github.com/wuyuup/iems469/blob/master/hw3/breakout.png?raw=true)
+![alt text](https://github.com/wuyuup/iems469/blob/master/hw3/breakout.png?raw=false)
 
 After training for 24 hours, playing 1000 episodes of the game yields the following figure:
 
-![alt text](https://github.com/wuyuup/iems469/blob/master/hw3/breakout_enjoy.png?raw=true)
+![alt text](https://github.com/wuyuup/iems469/blob/master/hw3/breakout_enjoy.png?raw=false)
 
 Run
 ```
@@ -20,8 +20,8 @@ python main.py --env 'MsPacman-v0'
 ```
 to obtain the following training curve for MsPacman-v0 with DQN: 
 
-![alt text](https://github.com/wuyuup/iems469/blob/master/hw3/mspacman.png?raw=true)
+![alt text](https://github.com/wuyuup/iems469/blob/master/hw3/mspacman.png?raw=false)
 
 After training for 24 hours, playing 1000 episodes of the game yields the following figure:
 
-![alt text](https://github.com/wuyuup/iems469/blob/master/hw3/mspacman_enjoy.png?raw=true)
+![alt text](https://github.com/wuyuup/iems469/blob/master/hw3/mspacman_enjoy.png?raw=false)
