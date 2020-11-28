@@ -1,4 +1,4 @@
-# HW2 iems469
+# HW3 iems469
 
 HW3 for IEMS-469 (Zuyue Fu)
 

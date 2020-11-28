@@ -14,7 +14,7 @@ tf.disable_v2_behavior()
 
 parser = argparse.ArgumentParser(description='RL')
 parser.add_argument('--log-dir', default = 'regret.log', help='directory to save log file')
-parser.add_argument('--alpha', default = 200.0, type=float)
+parser.add_argument('--alpha', default = 1.0, type=float)
 parser.add_argument('--nepisode', default = 200, type=int)
 
 
