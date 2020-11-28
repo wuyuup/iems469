@@ -125,9 +125,3 @@ for ind in range(18000, 19181):
     output_str = str(total_regret) + ' ' + str(total_regret/nstep)
     logging.info(output_str)
 
-logging.close()
-
-
-
-
-
